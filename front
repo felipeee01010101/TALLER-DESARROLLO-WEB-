@@ -1,0 +1,365 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Poké Fresh – Bowls hawaianos personalizados</title>
+<style>
+:root{ --pri:#4dc0b5; --bg:#fafafa; --ink:#1f2937; --mut:#6b7280; --card:#fff; }
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:var(--ink)}
+
+/* Header */
+header{position:sticky;top:0;background:#ffffffcc;backdrop-filter:blur(8px);border-bottom:1px solid #eee;z-index:10}
+.header-inner{display:flex;align-items:center;justify-content:space-between;gap:12px;max-width:1100px;margin:0 auto;padding:12px 16px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:800}
+.brand .logo{width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,#5eead4,#3b82f6);display:grid;place-items:center;color:#fff;font-weight:900}
+nav{display:flex;gap:14px;align-items:center}
+nav a{color:#111;text-decoration:none;font-weight:600}
+nav a:hover{color:#0ea5e9}
+.cart-btn{background:#111;color:#fff;border:0;border-radius:999px;padding:8px 12px;cursor:pointer}
+.cart-btn:hover{opacity:.9}
+
+/* Layout */
+main{padding:28px}
+.center{max-width:1100px;margin:0 auto}
+.section-title{margin:36px 0 14px;font-size:28px}
+
+/* Hero */
+.hero{padding:38px 20px;border-radius:14px;background:linear-gradient(180deg,#e0f7f5,#f7fffe);text-align:center}
+.hero h1{margin:0 0 8px}
+.badge{display:inline-block;background:#0000000e;color:#111;border-radius:999px;padding:6px 12px;font-size:12px;margin:6px 6px 0}
+
+/* Chips */
+.chips{display:flex;gap:10px;flex-wrap:wrap;margin:10px 0 18px}
+.chip{border:1px solid #e5e7eb;border-radius:999px;padding:6px 12px;font-size:13px;background:#fff;cursor:pointer}
+.chip.active,.chip:hover{background:var(--pri);border-color:var(--pri);color:#fff}
+
+/* Grid catálogo */
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:18px}
+.card{background:var(--card);border-radius:12px;overflow:hidden;box-shadow:0 2px 6px rgba(0,0,0,.06);border:1px solid #f1f5f9}
+.thumb{width:100%;aspect-ratio:4/3;object-fit:cover;display:block}
+.card-body{padding:12px 14px}
+.card h3{margin:2px 0 4px;font-size:18px}
+.card p{margin:0;color:var(--mut);font-size:14px}
+.row{display:flex;align-items:center;justify-content:space-between;margin-top:8px;gap:8px}
+.price{font-weight:800}
+.btn{display:inline-block;background:var(--pri);color:#fff;border:0;border-radius:8px;padding:8px 12px;text-decoration:none;cursor:pointer;white-space:nowrap}
+.btn.secondary{background:#111}
+
+/* Modal detalle */
+.modal{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.5);padding:16px}
+.modal.open{display:flex}
+.panel{background:#fff;max-width:640px;width:100%;border-radius:14px;overflow:hidden;box-shadow:0 10px 40px rgba(0,0,0,.25)}
+.panel img{width:100%;aspect-ratio:16/9;object-fit:cover}
+.panel .p-body{padding:16px}
+.panel .bar{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
+
+/* Info tienda */
+.info{display:grid;grid-template-columns:1.2fr .8fr;gap:18px}
+@media (max-width:860px){.info{grid-template-columns:1fr}}
+.tile{background:#fff;border:1px solid #eef2f7;border-radius:12px;padding:16px;box-shadow:0 2px 6px rgba(0,0,0,.04)}
+
+/* Footer */
+footer{background:#0f172a;color:#fff;padding:16px;text-align:center;margin-top:40px}
+small{color:#cbd5e1}
+
+/* Carrito */
+.drawer{position:fixed;top:0;right:-420px;width:360px;max-width:90vw;height:100%;background:#fff;box-shadow:-6px 0 30px rgba(0,0,0,.2);transition:right .28s ease;border-left:1px solid #e5e7eb;z-index:30;display:flex;flex-direction:column}
+.drawer.open{right:0}
+.drawer header{position:sticky;top:0;background:#fff;border-bottom:1px solid #e5e7eb;padding:12px 14px;display:flex;justify-content:space-between;align-items:center}
+.drawer h3{margin:0;font-size:18px}
+.drawer .content{padding:12px 14px;flex:1;overflow:auto}
+.item{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center;border-bottom:1px dashed #eee;padding:8px 0}
+.item h4{margin:0;font-size:14px}
+.item small{color:#6b7280}
+.controls{display:flex;gap:6px;align-items:center}
+.icon-btn{border:1px solid #e5e7eb;background:#fff;border-radius:8px;width:28px;height:28px;display:grid;place-items:center;cursor:pointer}
+.icon-btn:hover{background:#f3f4f6}
+.total{display:flex;justify-content:space-between;align-items:center;padding:12px 14px;border-top:1px solid #e5e7eb}
+.actions{display:flex;gap:8px;padding:0 14px 14px}
+.actions .btn{flex:1}
+.empty{color:#6b7280;text-align:center;margin-top:10px}
+.badge-cart{background:#ef4444;color:#fff;border-radius:999px;padding:2px 8px;font-size:12px;margin-left:6px}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="brand">
+      <div class="logo">PF</div>
+      <div>Poké Fresh</div>
+    </div>
+    <nav>
+      <a href="#inicio">Inicio</a>
+      <a href="#catalogo">Catálogo</a>
+      <a href="#tienda">Tienda</a>
+      <a href="#contacto">Contacto</a>
+      <button id="btnCart" class="cart-btn">🛒 Carrito <span id="cartCount" class="badge-cart">0</span></button>
+    </nav>
+  </div>
+</header>
+
+<main class="center">
+
+  <!-- Inicio -->
+  <section id="inicio" class="hero">
+    <h1>Bowls frescos, rápidos y personalizados</h1>
+    <p>Elige base, proteína, toppings y aderezos. Ingredientes reales, sabor hawaiano.</p>
+    <div>
+      <a class="btn" href="#catalogo">Explorar catálogo</a>
+      <a class="btn secondary" href="#tienda">Cómo llegar</a>
+    </div>
+    <div>
+      <span class="badge">15–20 min</span>
+      <span class="badge">Sin frituras</span>
+      <span class="badge">Delivery & Retiro</span>
+    </div>
+  </section>
+
+  <!-- Catálogo -->
+  <h2 id="catalogo" class="section-title">Catálogo</h2>
+  <div class="chips" id="chips">
+    <button class="chip active" data-cat="todos">Todos</button>
+    <button class="chip" data-cat="bowls">Bowls</button>
+    <button class="chip" data-cat="veganos">Vegano</button>
+    <button class="chip" data-cat="proteicos">Proteico</button>
+    <button class="chip" data-cat="snacks">Snacks</button>
+    <button class="chip" data-cat="bebidas">Bebidas</button>
+  </div>
+
+  <div id="grid" class="grid"></div>
+
+  <!-- Tienda y contacto -->
+  <h2 id="tienda" class="section-title">Nuestra tienda</h2>
+  <div class="info">
+    <div class="tile">
+      <h3>Dirección</h3>
+      <p>Darío Pavez 11<br>Paine, Región Metropolitana</p>
+      <h3 style="margin-top:14px;">Teléfono</h3>
+      <p>+56 9 7746 8219</p>
+    </div>
+    <div class="tile" id="contacto">
+      <h3>Contáctanos</h3>
+      <form id="form-cta">
+        <input type="text" placeholder="Tu nombre" required style="width:100%;padding:10px;border:1px solid #e5e7eb;border-radius:8px;margin:6px 0">
+        <input type="email" placeholder="Tu correo" required style="width:100%;padding:10px;border:1px solid #e5e7eb;border-radius:8px;margin:6px 0">
+        <textarea rows="4" placeholder="Cuéntanos en qué te ayudamos..." required style="width:100%;padding:10px;border:1px solid #e5e7eb;border-radius:8px;margin:6px 0"></textarea>
+        <button class="btn" type="submit">Enviar</button>
+      </form>
+      <p id="ok" style="display:none;margin-top:8px;color:#16a34a;font-weight:600">¡Gracias! Te contactaremos pronto 😊</p>
+    </div>
+  </div>
+
+</main>
+
+<footer>
+  <div>© 2025 Poké Fresh — Bowls hawaianos personalizados</div>
+  <small>Darío Pavez 11, Paine · +56 9 7746 8219</small>
+</footer>
+
+<!-- Modal detalles -->
+<div id="modal" class="modal" aria-hidden="true">
+  <div class="panel">
+    <img id="m-img" alt="">
+    <div class="p-body">
+      <h3 id="m-nombre"></h3>
+      <p id="m-desc" style="color:var(--mut)"></p>
+      <div class="bar">
+        <span class="price" id="m-precio"></span>
+      </div>
+      <div class="bar" style="margin-top:6px">
+        <a class="btn" href="#" id="btn-add">Agregar</a>
+        <a class="btn secondary" href="#" id="btn-close">Cerrar</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Carrito -->
+<aside id="drawer" class="drawer" aria-hidden="true">
+  <header>
+    <h3>🛒 Tu carrito</h3>
+    <button id="btnCloseDrawer" class="icon-btn" title="Cerrar">✕</button>
+  </header>
+  <div id="cartList" class="content"></div>
+  <div class="total">
+    <strong>Total</strong>
+    <div id="cartTotal">CLP $0</div>
+  </div>
+  <div class="actions">
+    <button id="btnEmpty" class="btn" style="background:#ef4444">Vaciar</button>
+    <button class="btn">Continuar</button>
+  </div>
+</aside>
+
+<script>
+// Datos del catálogo 
+const productos = [
+  {id:1, nombre:"Bowl Clásico",      precio:6990, cat:["bowls"],             desc:"Arroz sushi, salmón, palta, pepino, sésamo.",
+   img:"https://images.unsplash.com/photo-1553621042-f6e147245754?auto=format&fit=crop&w=1000&q=60"},
+  {id:2, nombre:"Bowl Vegano",       precio:6490, cat:["bowls","veganos"],   desc:"Quinoa, tofu, edamame, palta, kale.",
+   img:"https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?auto=format&fit=crop&w=1000&q=60"},
+  {id:3, nombre:"Bowl Proteico",     precio:7290, cat:["bowls","proteicos"], desc:"Arroz integral, pollo grillado, brócoli.",
+   img:"https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=1000&q=60"},
+  {id:4, nombre:"Bowl Atún Picante", precio:7590, cat:["bowls"],             desc:"Arroz sushi, atún, sriracha mayo, cebollín.",
+   img:"https://es.cravingsjournal.com/wp-content/uploads/2022/11/poke-bowl-con-mayonesa-picante-3-500x375.jpg"},
+  {id:5, nombre:"Snack Edamame", precio:2490, cat:["snacks"], desc:"Edamame al vapor con sal marina.", 
+   img:"https://www.mentta.com/blog/wp-content/uploads/2021/11/edamame-ok.jpg"},
+  {id:6, nombre:"Snack Mix de Frutos", precio:2990, cat:["snacks"], desc:"Almendras, nueces y cranberries.", 
+   img:"https://hips.hearstapps.com/hmg-prod/images/mix-nuts-and-dried-fruits-background-and-wallpaper-royalty-free-image-1681467161.jpg?crop=0.647xw:0.969xh;0.141xw,0&resize=640:*"},
+  {id:7, nombre:"Té Helado Artesanal", precio:1990, cat:["bebidas"],         desc:"Té negro, limón y miel, bien frío.",
+   img:"https://images.unsplash.com/photo-1497534446932-c925b458314e?auto=format&fit=crop&w=1000&q=60"},
+  {id:8, nombre:"Agua sin gas",      precio:1290, cat:["bebidas"],           desc:"Agua mineral sin gas 330ml.",
+   img:"https://images.unsplash.com/photo-1548839140-29a749e1cf4d?auto=format&fit=crop&w=1000&q=60"},
+];
+
+const grid = document.getElementById('grid');
+const chips = document.getElementById('chips');
+const modal = document.getElementById('modal');
+const mImg = document.getElementById('m-img');
+const mNombre = document.getElementById('m-nombre');
+const mDesc = document.getElementById('m-desc');
+const mPrecio = document.getElementById('m-precio');
+const btnAdd = document.getElementById('btn-add');
+const btnClose = document.getElementById('btn-close');
+
+const drawer = document.getElementById('drawer');
+const btnCart = document.getElementById('btnCart');
+const btnCloseDrawer = document.getElementById('btnCloseDrawer');
+const cartList = document.getElementById('cartList');
+const cartTotal = document.getElementById('cartTotal');
+const cartCount = document.getElementById('cartCount');
+const btnEmpty = document.getElementById('btnEmpty');
+
+let carrito = []; // {id, nombre, precio, qty}
+
+/* Helpers */
+const CLP = n => "CLP $" + n.toLocaleString('es-CL');
+function updateCartBadge(){
+  const totalQty = carrito.reduce((acc,i)=>acc+i.qty,0);
+  cartCount.textContent = totalQty;
+}
+function openCart(){ drawer.classList.add('open'); drawer.setAttribute('aria-hidden','false'); }
+function closeCart(){ drawer.classList.remove('open'); drawer.setAttribute('aria-hidden','true'); }
+function renderCart(){
+  if(carrito.length===0){
+    cartList.innerHTML = `<p class="empty">Tu carrito está vacío</p>`;
+    cartTotal.textContent = CLP(0);
+    updateCartBadge();
+    return;
+  }
+  cartList.innerHTML = carrito.map(i=>`
+    <div class="item" data-id="${i.id}">
+      <div>
+        <h4>${i.nombre}</h4>
+        <small>${i.qty} × ${CLP(i.precio)}</small>
+      </div>
+      <div class="controls">
+        <button class="icon-btn" data-dec="${i.id}" title="Quitar uno">−</button>
+        <button class="icon-btn" data-inc="${i.id}" title="Agregar uno">＋</button>
+        <button class="icon-btn" data-del="${i.id}" title="Eliminar">🗑️</button>
+      </div>
+    </div>
+  `).join('');
+  const total = carrito.reduce((acc,i)=>acc + i.precio*i.qty, 0);
+  cartTotal.textContent = CLP(total);
+  updateCartBadge();
+}
+function addToCart(id){
+  const p = productos.find(x=>x.id==id);
+  if(!p) return;
+  const found = carrito.find(x=>x.id==id);
+  if(found) found.qty += 1;
+  else carrito.push({id:p.id, nombre:p.nombre, precio:p.precio, qty:1});
+  renderCart();
+}
+
+/* Render catálogo con filtro */
+function render(cat="todos"){
+  const list = (cat==="todos") ? productos : productos.filter(p=>p.cat.includes(cat));
+  grid.innerHTML = list.map(p=>`
+    <article class="card" data-id="${p.id}">
+      <img class="thumb" src="${p.img}" alt="${p.nombre}" loading="lazy"
+           onerror="this.onerror=null;this.src='https://via.placeholder.com/800x600?text=Pok%C3%A9+Fresh';">
+      <div class="card-body">
+        <h3>${p.nombre}</h3>
+        <p>${p.desc}</p>
+        <div class="row">
+          <span class="price">${CLP(p.precio)}</span>
+          <a class="btn" href="#" data-add="${p.id}">Agregar</a>
+        </div>
+      </div>
+    </article>
+  `).join('');
+}
+render();
+
+/* Filtro por chips */
+chips.addEventListener('click', e=>{
+  const c = e.target.closest('.chip'); if(!c) return;
+  document.querySelectorAll('.chip').forEach(x=>x.classList.remove('active'));
+  c.classList.add('active');
+  render(c.dataset.cat);
+  document.getElementById('catalogo').scrollIntoView({behavior:'smooth'});
+});
+
+/* Clicks en catálogo*/
+grid.addEventListener('click', e=>{
+  const add = e.target.closest('[data-add]');
+  if(add){
+    addToCart(add.dataset.add);
+    openCart(); // abrir carrito al agregar
+    e.preventDefault();
+    return;
+  }
+  const card = e.target.closest('.card'); if(!card) return;
+  const p = productos.find(x=>x.id==card.dataset.id);
+  mImg.src = p.img;
+  mImg.alt = p.nombre;
+  mImg.onerror = () => { mImg.src = 'https://via.placeholder.com/1200x800?text=Pok%C3%A9+Fresh'; };
+  mNombre.textContent = p.nombre;
+  mDesc.textContent = p.desc;
+  mPrecio.textContent = CLP(p.precio);
+  btnAdd.onclick = (ev)=>{ev.preventDefault(); addToCart(p.id); openCart();};
+  modal.classList.add('open');
+  modal.setAttribute('aria-hidden','false');
+});
+
+/* Cerrar modal */
+btnClose.addEventListener('click', e=>{e.preventDefault(); modal.classList.remove('open');});
+modal.addEventListener('click', e=>{ if(e.target===modal) modal.classList.remove('open'); });
+document.addEventListener('keydown', e=>{ if(e.key==='Escape'){ modal.classList.remove('open'); closeCart(); }});
+
+/* Drawer carrito: abrir/cerrar */
+btnCart.addEventListener('click', openCart);
+btnCloseDrawer.addEventListener('click', closeCart);
+
+/* Controles dentro del carrito */
+cartList.addEventListener('click', e=>{
+  const inc = e.target.closest('[data-inc]'), dec = e.target.closest('[data-dec]'), del = e.target.closest('[data-del]');
+  if(inc){
+    const item = carrito.find(x=>x.id==inc.dataset.inc); if(item){ item.qty++; renderCart(); }
+  }else if(dec){
+    const item = carrito.find(x=>x.id==dec.dataset.dec); if(item){ item.qty--; if(item.qty<=0){ carrito = carrito.filter(x=>x.id!=item.id); } renderCart(); }
+  }else if(del){
+    carrito = carrito.filter(x=>x.id!=del.dataset.del); renderCart();
+  }
+});
+
+/* Vaciar carrito */
+btnEmpty.addEventListener('click', ()=>{ carrito = []; renderCart(); });
+
+/* Contacto */
+document.getElementById('form-cta').addEventListener('submit', e=>{
+  e.preventDefault();
+  document.getElementById('ok').style.display='block';
+  e.target.reset();
+});
+
+/* Inicializar */
+renderCart();
+</script>
+</body>
+</html>
