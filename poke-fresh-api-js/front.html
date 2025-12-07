@@ -1,0 +1,617 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Poké Fresh – Bowls hawaianos personalizados</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* --- PALETA NARANJA VIBRANTE --- */
+:root{ 
+  --primary: #ff7f50;       /* Naranja Coral Principal */
+  --primary-hover: #e66e42; 
+  --secondary: #2ecc71;     /* Verde Stock/Éxito */
+  --dark: #2d3436;          /* Texto Oscuro */
+  --gray: #a4b0be;
+  --light: #fdfbf7;         /* Fondo crema muy suave */
+  --white: #ffffff;
+  --danger: #ff6b6b;
+  --card-shadow: 0 10px 25px rgba(0,0,0,0.06);
+}
+
+* { box-sizing: border-box; }
+body { margin: 0; font-family: 'Poppins', sans-serif; background: var(--light); color: var(--dark); -webkit-font-smoothing: antialiased; }
+
+/* HEADER */
+header { background: rgba(255,255,255,0.95); position: sticky; top: 0; z-index: 1000; backdrop-filter: blur(10px); box-shadow: 0 2px 15px rgba(0,0,0,0.03); }
+.header-inner { max-width: 1200px; margin: 0 auto; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; }
+.brand { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 1.4rem; }
+.logo { width: 40px; height: 40px; background: var(--primary); color: white; border-radius: 10px; display: grid; place-items: center; font-size: 1.1rem; box-shadow: 0 4px 10px rgba(255, 107, 107, 0.3); }
+nav { display: flex; gap: 20px; align-items: center; }
+nav a { text-decoration: none; color: var(--dark); font-weight: 600; cursor: pointer; transition: 0.3s; }
+nav a:hover { color: var(--primary); }
+
+/* BOTONES NAV */
+.auth-btn { border: 2px solid var(--dark); background: transparent; border-radius: 30px; padding: 8px 20px; font-weight: 700; cursor: pointer; transition: 0.3s; font-size: 0.9rem; color: var(--dark); }
+.auth-btn:hover { background: var(--dark); color: white; }
+.auth-btn.logged-in { border-color: var(--secondary); color: var(--secondary); background: rgba(46, 204, 113, 0.1); }
+.cart-btn { background: var(--dark); color: white; border: none; border-radius: 30px; padding: 8px 20px; font-weight: 700; cursor: pointer; display: flex; gap: 8px; align-items: center; font-size: 0.9rem; }
+.badge-cart { background: var(--primary); padding: 2px 6px; border-radius: 50%; font-size: 11px; color: white; }
+.logout-btn { background: transparent; border: none; color: var(--gray); cursor: pointer; font-weight: 600; font-size: 0.9rem; transition: color 0.3s; }
+.logout-btn:hover { color: var(--primary); text-decoration: underline; }
+
+/* MAIN */
+main { max-width: 1200px; margin: 0 auto; padding: 40px 20px; min-height: 80vh; }
+
+/* HERO BANNER ESTÁTICO */
+.hero-banner {
+  position: relative; width: 100%; height: 380px;
+  border-radius: 24px; overflow: hidden; margin-bottom: 40px;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.08);
+  /* Imagen fija */
+  background-image: url('https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=1600');
+  background-size: cover; background-position: center;
+  display: flex; align-items: center; padding-left: 60px;
+}
+.hero-banner::before {
+  content: ''; position: absolute; inset: 0;
+  background: linear-gradient(90deg, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0) 70%);
+}
+.hero-content { position: relative; z-index: 2; color: white; max-width: 500px; }
+.hero-content h1 { font-size: 3rem; line-height: 1.1; margin: 0 0 15px; font-weight: 800; text-shadow: 0 4px 10px rgba(0,0,0,0.3); }
+.hero-content p { font-size: 1.2rem; margin-bottom: 30px; font-weight: 500; opacity: 0.95; }
+.badge-hero {
+  background: var(--primary); color: white; padding: 8px 16px; border-radius: 8px; 
+  font-size: 0.9rem; font-weight: 700; margin-right: 10px; display: inline-block;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+
+/* SECCIÓN DESTACADOS */
+.featured-section { margin-bottom: 40px; }
+.section-title { font-size: 1.5rem; font-weight: 800; margin-bottom: 20px; color: var(--dark); }
+.featured-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; }
+.featured-card { background: white; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.05); border: 1px solid #eee; transition: 0.3s; display: flex; align-items: center; padding: 10px; gap: 15px; }
+.featured-card:hover { transform: translateY(-3px); border-color: var(--primary); }
+.featured-card img { width: 70px; height: 70px; object-fit: cover; border-radius: 12px; }
+.featured-info h4 { margin: 0 0 5px; font-size: 1rem; }
+.featured-info p { margin: 0 0 8px; font-weight: 700; color: var(--primary); }
+.btn-sm { background: var(--dark); color: white; border: none; padding: 5px 12px; border-radius: 8px; font-size: 0.8rem; cursor: pointer; }
+
+/* FILTROS (CHIPS BONITOS) */
+.filters { display: flex; gap: 12px; margin-bottom: 40px; flex-wrap: wrap; }
+.filter-btn {
+  border: none; background: white; padding: 12px 24px; border-radius: 50px;
+  font-weight: 600; color: var(--gray); cursor: pointer; transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.05); font-size: 0.95rem; font-family: inherit;
+}
+.filter-btn:hover { transform: translateY(-2px); color: var(--dark); }
+.filter-btn.active { background: var(--primary); color: white; box-shadow: 0 8px 20px rgba(255, 127, 80, 0.4); }
+
+/* GRID PRODUCTOS */
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 30px; }
+.card {
+  background: white; border-radius: 20px; overflow: hidden; 
+  transition: all 0.3s ease; position: relative; 
+  box-shadow: 0 10px 30px rgba(0,0,0,0.05); border: 1px solid transparent;
+}
+.card:hover { transform: translateY(-8px); box-shadow: 0 20px 40px rgba(0,0,0,0.1); border-color: #eee; }
+
+.card-img-wrapper { position: relative; height: 220px; overflow: hidden; }
+.card-img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s; }
+.card:hover .card-img { transform: scale(1.05); }
+
+.stock-badge {
+  position: absolute; top: 15px; left: 15px;
+  background: rgba(255,255,255,0.95); padding: 5px 12px; border-radius: 20px;
+  font-size: 0.75rem; font-weight: 700; display: flex; align-items: center; gap: 5px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+.dot { width: 8px; height: 8px; border-radius: 50%; background: var(--secondary); }
+
+.card-body { padding: 25px; }
+.card-title { margin: 0 0 5px; font-size: 1.2rem; font-weight: 700; color: var(--dark); }
+.card-desc { font-size: 0.9rem; color: #636e72; margin-bottom: 20px; line-height: 1.6; height: 45px; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+.card-footer { display: flex; justify-content: space-between; align-items: center; }
+.price { font-size: 1.4rem; font-weight: 800; color: var(--dark); }
+
+.btn-buy {
+  background: var(--primary); color: white; border: none;
+  padding: 12px 24px; border-radius: 12px; font-weight: 700; cursor: pointer;
+  font-size: 0.95rem; box-shadow: 0 4px 15px rgba(255, 127, 80, 0.4); transition: 0.2s;
+}
+.btn-buy:hover { background: var(--primary-hover); transform: translateY(-2px); }
+
+.btn-view {
+  width: 44px; height: 44px; border-radius: 12px; border: none;
+  background: #f1f2f6; color: var(--dark); cursor: pointer;
+  display: grid; place-items: center; font-size: 1.2rem; transition: 0.2s;
+}
+.btn-view:hover { background: #e2e6ea; }
+
+/* CHECKOUT & KITCHEN VIEW */
+#checkout-view, #kitchen-view { display: none; padding-top: 20px; animation: fadeIn 0.4s; }
+.checkout-grid { display: grid; grid-template-columns: 1.6fr 1fr; gap: 40px; }
+
+.checkout-card { background: white; padding: 40px; border-radius: 24px; border: 1px solid #eee; box-shadow: 0 10px 30px rgba(0,0,0,0.03); }
+.checkout-title { font-size: 1.5rem; font-weight: 800; margin: 0 0 20px; padding-bottom: 15px; border-bottom: 2px solid #f5f5f5; }
+
+.payment-opt { border: 2px solid #eee; border-radius: 12px; padding: 15px; margin-bottom: 10px; cursor: pointer; display: flex; align-items: center; gap: 15px; transition: 0.2s; }
+.payment-opt:hover { border-color: var(--gray); }
+.payment-opt.selected { border-color: var(--primary); background: #fff5ec; }
+
+/* VALIDACIÓN CONTRASEÑA */
+.password-requirements { font-size: 0.8rem; color: var(--gray); margin-top: 5px; display: none; }
+.password-requirements.show { display: block; }
+.req-item { display: flex; align-items: center; gap: 5px; }
+.req-item.valid { color: var(--secondary); }
+.req-item::before { content: '•'; }
+.req-item.valid::before { content: '✓'; }
+
+/* UTILS */
+.modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(5px); z-index: 2000; display: none; align-items: center; justify-content: center; }
+.modal-overlay.open { display: flex; animation: fadeIn 0.2s; }
+.modal-box { background: white; padding: 35px; border-radius: 24px; width: 90%; max-width: 420px; box-shadow: 0 25px 50px rgba(0,0,0,0.2); position: relative; }
+.close-abs { position: absolute; top: 20px; right: 20px; background: #f5f5f5; border: none; width: 36px; height: 36px; border-radius: 50%; cursor: pointer; }
+
+.drawer { position: fixed; top: 0; right: -450px; width: 400px; max-width: 100%; height: 100%; background: white; z-index: 3000; transition: right 0.4s cubic-bezier(0.2, 1, 0.3, 1); box-shadow: -10px 0 40px rgba(0,0,0,0.1); padding: 20px; display: flex; flex-direction: column; }
+.drawer.open { right: 0; }
+
+.toast-container { position: fixed; bottom: 30px; right: 30px; z-index: 4000; display: flex; flex-direction: column; gap: 10px; }
+.toast { background: white; padding: 15px 20px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); display: flex; align-items: center; gap: 12px; border-left: 5px solid var(--secondary); animation: slideUp 0.3s; }
+.toast.error { border-left-color: var(--danger); }
+
+.form-input { width: 100%; padding: 12px; border: 2px solid #eee; border-radius: 10px; margin-bottom: 15px; font-family: inherit; }
+.btn-block { width: 100%; padding: 15px; border: none; border-radius: 12px; background: var(--primary); color: white; font-weight: 700; cursor: pointer; font-size: 1.1rem; transition: 0.2s; }
+.btn-block:hover { transform: translateY(-2px); background: var(--primary-hover); }
+.btn-block:disabled { background: var(--gray); cursor: not-allowed; opacity: 0.7; }
+
+@keyframes fadeIn { from{opacity:0} to{opacity:1} }
+@keyframes slideUp { from{transform:translateY(20px);opacity:0} to{transform:translateY(0);opacity:1} }
+
+footer { background: white; padding: 60px 20px 20px; margin-top: 60px; border-top: 1px solid #eee; }
+.footer-content { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 40px; }
+.footer-col h3 { color: var(--primary); font-size: 1.5rem; margin-bottom: 15px; }
+.footer-col h4 { font-size: 1.1rem; margin-bottom: 15px; font-weight: 700; }
+.footer-col p { color: var(--gray); line-height: 1.6; font-size: 0.9rem; }
+.footer-col a { display: block; color: #636e72; text-decoration: none; margin-bottom: 10px; font-size: 0.9rem; transition: 0.2s; }
+.footer-col a:hover { color: var(--dark); }
+.footer-bottom { text-align: center; margin-top: 50px; pt: 20px; border-top: 1px solid #f0f0f0; color: #ccc; font-size: 0.85rem; }
+
+/* WHATSAPP */
+.whatsapp-btn { position: fixed; bottom: 30px; right: 30px; width: 60px; height: 60px; background: #25D366; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 15px rgba(37, 211, 102, 0.4); z-index: 5000; transition: 0.3s; }
+.whatsapp-btn:hover { transform: scale(1.1); }
+.whatsapp-btn img { width: 35px; height: 35px; }
+.toast-container { right: 100px; bottom: 30px; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="brand"><div class="logo">PF</div> Poké Fresh</div>
+    <nav>
+      <a onclick="mostrarInicio()">Inicio</a>
+      <a onclick="mostrarInicio()">Menú</a>
+      <button onclick="mostrarCocina()" style="background:transparent; border:1px solid var(--dark); border-radius:30px; padding:6px 15px; cursor:pointer; font-weight:bold; font-size:0.9rem;">👨‍🍳 Cocina</button>
+      
+      <button id="btnLogout" class="logout-btn" onclick="logout()" style="display:none;">Cerrar Sesión</button>
+      <button id="btnLogin" class="auth-btn" onclick="openAuthModal()">Iniciar Sesión</button>
+      <button class="cart-btn" onclick="openCart()">Tu Pedido <span class="badge-cart" id="cartBadge">0</span></button>
+    </nav>
+  </div>
+</header>
+
+<div id="toast-container" class="toast-container"></div>
+
+<main>
+  <div id="home-view">
+    <div class="hero-banner">
+      <div class="hero-content">
+        <h1>Bowls Frescos <br>y Naturales 🥑</h1>
+        <p>Ingredientes del día, sabor hawaiano real.</p>
+        <div><span class="badge-hero">⏱️ 30 min</span><span class="badge-hero">🛵 Envío Gratis</span></div>
+      </div>
+    </div>
+
+    <section class="featured-section">
+      <h2 class="section-title">🔥 Lo Más Pedido</h2>
+      <div class="featured-grid">
+        <div class="featured-card">
+          <img src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400" alt="Bowl Clásico">
+          <div class="featured-info"><h4>Bowl Clásico</h4><p>$6.990</p><button class="btn-sm" onclick="addToCartByName('Bowl Clásico')">Pedir</button></div>
+        </div>
+        <div class="featured-card">
+          <img src="https://images.unsplash.com/photo-1543339308-43e59d6b73a6?w=400" alt="Bowl Proteico">
+          <div class="featured-info"><h4>Bowl Proteico</h4><p>$7.290</p><button class="btn-sm" onclick="addToCartByName('Bowl Proteico')">Pedir</button></div>
+        </div>
+        <div class="featured-card">
+          <img src="https://aldeanativa.cl/cdn/shop/files/kombucha-original-kombuchacha-500-ml-kombuchacha-aldea-nativa-450741.jpg?v=1718729697" alt="Kombucha">
+          <div class="featured-info"><h4>Kombucha</h4><p>$3.500</p><button class="btn-sm" onclick="addToCartByName('Kombucha Original')">Pedir</button></div>
+        </div>
+      </div>
+    </section>
+
+    <div class="filters" id="filters">
+      <button class="filter-btn active" data-cat="todos">Todos</button>
+      <button class="filter-btn" data-cat="bowls">Bowls</button>
+      <button class="filter-btn" data-cat="veganos">Veggie</button>
+      <button class="filter-btn" data-cat="proteicos">Proteicos</button>
+      <button class="filter-btn" data-cat="snacks">Snacks</button>
+      <button class="filter-btn" data-cat="bebidas">Bebidas</button>
+    </div>
+
+    <div id="grid" class="grid"><p style="grid-column:1/-1; text-align:center">Cargando...</p></div>
+  </div>
+
+  <div id="checkout-view">
+    <h2>Finalizar Compra</h2>
+    <div class="checkout-grid">
+      <div class="checkout-card">
+        <h3>Envío</h3>
+        <input type="text" id="address" class="form-input" value="Av. Siempre Viva 742">
+        <h3>Pago</h3>
+        <div style="display:flex; gap:10px; margin-bottom:20px;">
+            <button class="payment-opt selected" onclick="selectPayment(this, 'webpay')" style="flex:1; justify-content:center; font-weight:bold;">💳 Webpay</button>
+            <button class="payment-opt" onclick="selectPayment(this, 'mercadopago')" style="flex:1; justify-content:center;">📱 MercadoPago</button>
+        </div>
+        <button class="btn-block" onclick="enviarOrden()">Pagar Ahora</button>
+        <button onclick="mostrarInicio()" style="width:100%; margin-top:10px; background:none; border:none; cursor:pointer; text-decoration:underline; color:var(--gray);">Volver</button>
+      </div>
+      <div class="checkout-card">
+        <h3>Resumen</h3>
+        <div id="checkout-items"></div>
+        <div style="border-top:2px dashed #eee; margin-top:20px; padding-top:15px; display:flex; justify-content:space-between; font-weight:800; font-size:1.2rem;">
+            <span>Total</span><span id="checkout-total">$0</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="kitchen-view">
+    <h2 class="section-title">👨‍🍳 Cola de Preparación y Despacho</h2>
+    <div id="kitchen-grid" style="display:grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap:20px;">
+      <p>Cargando pedidos...</p>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <div class="footer-content">
+    <div class="footer-col"><h3>Poké Fresh</h3><p>Bowls hawaianos frescos y saludables, entregados en la puerta de tu casa.</p></div>
+    <div class="footer-col"><h4>Enlaces</h4><a href="#">Nosotros</a><a href="#">Menú</a><a href="#">Contacto</a></div>
+    <div class="footer-col"><h4>Legales</h4><a href="#">Términos</a><a href="#">Privacidad</a></div>
+    <div class="footer-col"><h4>Síguenos</h4><p>📷 @pokefresh</p></div>
+  </div>
+  <div class="footer-bottom">© 2025 Poké Fresh • Hecho con ❤️ en Chile</div>
+</footer>
+
+<a href="https://wa.me/56912345678" target="_blank" class="whatsapp-btn">
+  <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp">
+</a>
+
+<div id="modal-auth" class="modal-overlay">
+    <div class="modal-box">
+        <button class="close-abs" onclick="closeAuthModal()">✕</button>
+        <h2 id="auth-title" style="text-align:center;">Bienvenido</h2>
+        <form id="form-auth" style="display:flex; flex-direction:column; gap:15px;">
+            <input type="text" id="auth-name" class="form-input" placeholder="Nombre (Solo Registro)" style="display:none;">
+            <input type="email" id="auth-email" class="form-input" placeholder="Correo" required>
+            <div>
+                <input type="password" id="auth-pass" class="form-input" placeholder="Contraseña" required oninput="validarPassword()">
+                <div id="pass-reqs" class="password-requirements">
+                    <div class="req-item" id="req-len">Mínimo 8 caracteres</div>
+                    <div class="req-item" id="req-num">Al menos un número</div>
+                    <div class="req-item" id="req-may">Al menos una mayúscula</div>
+                </div>
+            </div>
+            <button type="submit" id="auth-submit-btn" class="btn-block">Continuar</button>
+        </form>
+        <p id="auth-toggle" style="text-align:center; margin-top:15px; cursor:pointer; text-decoration:underline;">¿No tienes cuenta? Regístrate</p>
+    </div>
+</div>
+
+<div id="modal-product" class="modal-overlay"><div class="modal-box"><button class="close-abs" onclick="document.getElementById('modal-product').classList.remove('open')">✕</button><img id="m-img" style="width:100%; height:200px; object-fit:cover; border-radius:16px; margin-bottom:15px;"><div style="display:flex; justify-content:space-between; align-items:center;"><h2 id="m-nombre" style="margin:0; font-size:1.3rem;"></h2><span id="m-precio" style="font-size:1.3rem; font-weight:800; color:var(--primary);"></span></div><p id="m-desc" style="color:#666; margin:10px 0 20px;"></p><button id="btn-add-modal" class="btn-block">Agregar al Pedido</button></div></div>
+
+<div id="modal-success" class="modal-overlay">
+  <div class="modal-box" style="text-align:center;">
+    <div style="font-size: 3rem; margin-bottom: 10px;">🎉</div>
+    <h2 style="color: var(--secondary); margin: 0 0 10px;">¡Pedido Exitoso!</h2>
+    <p style="color: #666; margin-bottom: 20px;">Tu orden ha sido recibida correctamente.</p>
+    
+    <div style="background: #f8f9fa; padding: 15px; border-radius: 12px; margin-bottom: 20px; border: 1px dashed #ccc;">
+      <p style="margin: 0; font-size: 0.9rem; color: #888;">Folio de Boleta:</p>
+      <p id="success-folio" style="margin: 5px 0 0; font-weight: 800; font-size: 1.2rem; color: var(--dark);">---</p>
+    </div>
+
+    <a id="btn-ver-boleta" href="#" target="_blank" class="btn-block" style="display:block; text-decoration:none; margin-bottom:10px; line-height: 20px; padding-top:13px;">
+      📄 Ver Boleta Digital
+    </a>
+    
+    <button onclick="closeSuccessModal()" style="background:none; border:none; color:var(--gray); text-decoration:underline; cursor:pointer; margin-top:10px;">Seguir Comprando</button>
+  </div>
+</div>
+
+<aside id="drawer" class="drawer"><div style="padding:20px; display:flex; justify-content:space-between; align-items:center;"><h2>Tu Pedido</h2><button onclick="closeCart()" style="background:none; border:none; font-size:1.5rem; cursor:pointer;">✕</button></div><div id="cart-items" style="flex:1; overflow-y:auto; padding:20px;"></div><div style="padding:20px; border-top:1px solid #eee; background:#fdfdfd;"><div style="display:flex; justify-content:space-between; font-size:1.2rem; font-weight:800; margin-bottom:15px;"><span>Total</span><span id="cart-total">$0</span></div><button onclick="irACheckout()" class="btn-block">Ir a Pagar</button></div></aside>
+
+<script>
+const API_URL = 'http://localhost:4000/api';
+let productos = [], carrito = [], usuario = null, isRegistering = false, metodoPagoSeleccionado = 'webpay';
+
+// API & INIT
+async function init() {
+  try {
+    const res = await fetch(`${API_URL}/catalog`);
+    if(!res.ok) throw new Error();
+    productos = await res.json();
+    renderGrid(productos);
+  } catch(e) { document.getElementById('grid').innerHTML = '<p style="text-align:center; grid-column:1/-1">⚠️ Error conectando al backend. Asegúrate de ejecutar "npm start".</p>'; }
+}
+
+function renderGrid(lista) {
+  const grid = document.getElementById('grid');
+  if(lista.length === 0) { grid.innerHTML = '<p style="text-align:center; grid-column:1/-1">No hay productos.</p>'; return; }
+  grid.innerHTML = lista.map(p => `
+    <article class="card">
+      <div class="card-img-wrapper">
+        <img src="${p.img}" class="card-img" onerror="this.src='https://via.placeholder.com/300'">
+        <div class="stock-badge"><div class="dot"></div> Stock: ${p.stock}</div>
+      </div>
+      <div class="card-body">
+        <h3 class="card-title">${p.nombre}</h3>
+        <p class="card-desc">${p.desc || p.descripcion}</p>
+        <div class="card-footer">
+          <span class="price">$${p.precio.toLocaleString('es-CL')}</span>
+          <div style="display:flex; gap:10px;">
+            <button class="btn-view" onclick="abrirDetalle('${p._id}')" title="Ver">👁️</button>
+            <button class="btn-buy" onclick="addToCart('${p._id}')">Comprar</button>
+          </div>
+        </div>
+      </div>
+    </article>
+  `).join('');
+}
+
+function addToCartByName(name) {
+  const p = productos.find(x => x.nombre === name);
+  if(p) addToCart(p._id);
+}
+
+function addToCart(id) {
+  const p = productos.find(x=>x._id===id); const i=carrito.find(x=>x.id===id);
+  if(i) i.qty++; else carrito.push({id:p._id, nombre:p.nombre, precio:p.precio, qty:1, img:p.img});
+  renderCart(); showToast(`${p.nombre} agregado`);
+}
+
+function renderCart() {
+  const t = carrito.reduce((a,b)=>a+b.precio*b.qty,0);
+  document.getElementById('cartBadge').textContent = carrito.reduce((a,b)=>a+b.qty,0);
+  document.getElementById('cart-total').textContent = `$${t.toLocaleString('es-CL')}`;
+  document.getElementById('checkout-total').textContent = `$${t.toLocaleString('es-CL')}`;
+  document.getElementById('cart-items').innerHTML = carrito.map(i=>`
+    <div style="display:flex; gap:10px; margin-bottom:15px; align-items:center;">
+      <img src="${i.img}" style="width:50px; height:50px; border-radius:8px; object-fit:cover;">
+      <div style="flex:1;"><b>${i.nombre}</b><br><small>${i.qty} x $${i.precio.toLocaleString('es-CL')}</small></div>
+      <button onclick="modQty('${i.id}',1)" style="width:25px;height:25px;border-radius:50%;border:1px solid #eee;background:white;cursor:pointer;">+</button>
+      <button onclick="modQty('${i.id}',-1)" style="width:25px;height:25px;border-radius:50%;border:1px solid #eee;background:white;cursor:pointer;">-</button>
+      <button onclick="removeItem('${i.id}')" style="margin-left:5px; border:none; background:none; cursor:pointer;">🗑️</button>
+    </div>`).join('') || '<p style="text-align:center; color:#aaa;">Carrito vacío</p>';
+  document.getElementById('checkout-items').innerHTML = document.getElementById('cart-items').innerHTML;
+}
+
+function modQty(id,d){ const i=carrito.find(x=>x.id===id); if(i){ i.qty+=d; if(i.qty<=0) carrito=carrito.filter(x=>x.id!==id); renderCart(); } }
+function removeItem(id) { carrito = carrito.filter(x => x.id !== id); renderCart(); }
+
+// Listeners
+document.getElementById('filters').addEventListener('click', e=>{
+    if(e.target.tagName==='BUTTON'){
+        document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active')); e.target.classList.add('active');
+        const c=e.target.dataset.cat; renderGrid(c==='todos'?productos:productos.filter(p=>p.categorias.includes(c)));
+    }
+});
+function openCart(){document.getElementById('drawer').classList.add('open')}
+function closeCart(){document.getElementById('drawer').classList.remove('open')}
+function openAuthModal(){
+    document.getElementById('auth-pass').value = ''; 
+    document.getElementById('pass-reqs').classList.remove('show'); 
+    document.getElementById('modal-auth').classList.add('open');
+}
+function closeAuthModal(){document.getElementById('modal-auth').classList.remove('open')}
+function mostrarInicio(){
+  document.getElementById('home-view').style.display='block';
+  document.getElementById('checkout-view').style.display='none'; 
+  document.getElementById('kitchen-view').style.display='none'; // Ocultar cocina
+  window.scrollTo(0,0);
+}
+function irACheckout(){if(carrito.length===0)return showToast("Carrito vacío", "error"); closeCart(); document.getElementById('home-view').style.display='none'; document.getElementById('checkout-view').style.display='block';}
+function abrirDetalle(id){
+    const p=productos.find(x=>x._id===id); document.getElementById('m-img').src=p.img; document.getElementById('m-nombre').textContent=p.nombre;
+    document.getElementById('m-desc').textContent=p.desc || p.descripcion; document.getElementById('m-precio').textContent=`$${p.precio.toLocaleString('es-CL')}`;
+    document.getElementById('btn-add-modal').onclick=()=>{addToCart(p._id);document.getElementById('modal-product').classList.remove('open')};
+    document.getElementById('modal-product').classList.add('open');
+}
+function selectPayment(el, m) { document.querySelectorAll('.payment-opt').forEach(e=>e.classList.remove('selected')); el.classList.add('selected'); metodoPagoSeleccionado = m; }
+
+// Auth & Order
+document.getElementById('auth-toggle').onclick = () => {
+  isRegistering = !isRegistering;
+  document.getElementById('auth-title').textContent = isRegistering ? "Regístrate" : "Iniciar Sesión";
+  document.getElementById('auth-name').style.display = isRegistering ? "block" : "none";
+  document.querySelector('#form-auth button').textContent = isRegistering ? "Registrarse" : "Continuar";
+  document.getElementById('auth-toggle').textContent = isRegistering ? "¿Ya tienes cuenta? Entra" : "¿No tienes cuenta? Regístrate";
+  validarPassword(); 
+};
+
+function validarPassword() {
+  const pass = document.getElementById('auth-pass').value;
+  const reqsDiv = document.getElementById('pass-reqs');
+  const btn = document.getElementById('auth-submit-btn');
+  if (!isRegistering) { reqsDiv.classList.remove('show'); btn.disabled = false; return true; }
+  reqsDiv.classList.add('show');
+  const hasLen = pass.length >= 8; const hasNum = /\d/.test(pass); const hasMay = /[A-Z]/.test(pass);
+  updateReq('req-len', hasLen); updateReq('req-num', hasNum); updateReq('req-may', hasMay);
+  const isValid = hasLen && hasNum && hasMay;
+  btn.disabled = !isValid; return isValid;
+}
+function updateReq(id, valid) { const el = document.getElementById(id); if(valid) el.classList.add('valid'); else el.classList.remove('valid'); }
+
+document.getElementById('form-auth').onsubmit=async(e)=>{
+    e.preventDefault();
+    const email=document.getElementById('auth-email').value; const pass=document.getElementById('auth-pass').value;
+    if(isRegistering && !validarPassword()) return;
+    try{
+        let res;
+        if(isRegistering) {
+           res = await fetch(`${API_URL}/auth/register`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({nombre: document.getElementById('auth-name').value, email, password:pass})});
+        } else {
+           res = await fetch(`${API_URL}/auth/login`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,password:pass})});
+        }
+        const data=await res.json();
+        if(!res.ok) throw new Error(data.error);
+        
+        if(isRegistering) {
+            showToast("Cuenta creada. Inicia sesión."); isRegistering=false; document.getElementById('auth-toggle').click();
+        } else {
+            usuario=data.user; 
+            document.getElementById('btnLogin').style.display='none'; 
+            document.getElementById('btnLogout').style.display='block'; 
+            document.getElementById('btnLogout').textContent=`Hola, ${usuario.nombre}`; 
+            closeAuthModal(); showToast(`Bienvenido ${usuario.nombre}`);
+        }
+    }catch(e){showToast(e.message, 'error');}
+};
+
+function logout() { usuario=null; document.getElementById('btnLogin').style.display='block'; document.getElementById('btnLogout').style.display='none'; showToast("Sesión cerrada"); }
+
+// LÓGICA DE COMPRA (INCLUYE BOLETA AUTOMÁTICA)
+async function enviarOrden() {
+  if(!usuario) { 
+    showToast("Inicia sesión para comprar", "error"); 
+    openAuthModal(); 
+    return; 
+  }
+  
+  try {
+    const total = carrito.reduce((acc, i) => acc + (i.precio * i.qty), 0);
+    const itemsFormateados = carrito.map(i => ({ productId: i.id, qty: i.qty, precio: i.precio }));
+    const direccionInput = document.getElementById('address'); 
+    const direccion = direccionInput ? direccionInput.value : 'Retiro en tienda';
+
+    const resOrden = await fetch(`${API_URL}/orders/checkout`, {
+      method: 'POST', 
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({
+        cliente: { nombre: usuario.nombre, email: usuario.email, telefono: 'N/A', direccion: direccion },
+        items: itemsFormateados,
+        total: total,
+        medioPago: metodoPagoSeleccionado
+      })
+    });
+
+    const dataOrden = await resOrden.json();
+    
+    if(resOrden.ok) {
+      document.getElementById('success-folio').textContent = dataOrden.folio || 'Pendiente';
+      const btnBoleta = document.getElementById('btn-ver-boleta');
+      btnBoleta.href = `${API_URL}/orders/invoice/${dataOrden.invoiceId}`;
+      document.getElementById('modal-success').classList.add('open');
+      
+      carrito = []; 
+      renderCart(); 
+    } else {
+      showToast(dataOrden.error || "Error al procesar pedido", 'error');
+    }
+  } catch(err) { 
+    console.error(err);
+    showToast("Error de conexión con el servidor", 'error'); 
+  }
+}
+
+function closeSuccessModal() {
+  document.getElementById('modal-success').classList.remove('open');
+  mostrarInicio();
+}
+
+function showToast(msg, type='success') {
+  const t = document.createElement('div'); t.className = `toast ${type}`;
+  t.innerHTML = `<div>${type==='success'?'✅':'⚠️'}</div><div><p style="margin:0;font-weight:600;">${type==='success'?'Listo':'Error'}</p><p style="margin:0;font-size:0.85rem;color:#666;">${msg}</p></div>`;
+  document.getElementById('toast-container').appendChild(t);
+  setTimeout(() => t.remove(), 3000);
+}
+
+// --- LÓGICA DE COCINA (ADMIN) + ÉPICA E5 (ANULAR) ---
+function mostrarCocina() {
+  document.getElementById('home-view').style.display = 'none';
+  document.getElementById('checkout-view').style.display = 'none';
+  document.getElementById('kitchen-view').style.display = 'block';
+  cargarPedidosCocina();
+}
+
+async function cargarPedidosCocina() {
+  try {
+    const res = await fetch(`${API_URL}/orders/kitchen/pending`);
+    const pedidos = await res.json();
+    const grid = document.getElementById('kitchen-grid');
+    
+    if (pedidos.length === 0) {
+      grid.innerHTML = '<p style="grid-column:1/-1; text-align:center;">No hay pedidos pendientes. ¡Todo limpio! ✨</p>';
+      return;
+    }
+
+    grid.innerHTML = pedidos.map(p => `
+      <div class="checkout-card" style="padding:20px; border-left: 5px solid ${getColorEstado(p.estado)}">
+        <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
+          <span style="font-weight:bold;">#${p._id.slice(-6)}</span>
+          <span style="background:#eee; padding:2px 8px; border-radius:4px; font-size:0.8rem;">${p.estado.toUpperCase()}</span>
+        </div>
+        <h4 style="margin:0 0 5px;">${p.cliente.nombre}</h4>
+        <p style="font-size:0.85rem; color:#666; margin-bottom:15px;">${p.cliente.direccion}</p>
+        <div style="background:#f9f9f9; padding:10px; border-radius:8px; margin-bottom:15px;">
+          ${p.items.map(i => `<div style="font-size:0.9rem;">• <b>${i.cantidad}x</b> ${i.nombre || 'Producto'}</div>`).join('')}
+        </div>
+        
+        <div style="display:flex; gap:10px;">
+           ${p.estado === 'pagado' ? `<button onclick="actualizarEstado('${p._id}', 'en_preparacion')" class="btn-sm" style="background:var(--primary); width:100%;">🍳 Preparar</button>` : ''}
+           ${p.estado === 'en_preparacion' ? `<button onclick="actualizarEstado('${p._id}', 'en_camino')" class="btn-sm" style="background:var(--secondary); width:100%;">🛵 Despachar</button>` : ''}
+           ${p.estado === 'en_camino' ? `<button onclick="actualizarEstado('${p._id}', 'entregado')" class="btn-sm" style="background:#2d3436; width:100%;">✅ Entregar</button>` : ''}
+        </div>
+
+        <div style="margin-top:10px; border-top:1px solid #eee; padding-top:10px;">
+            <button onclick="if(confirm('¿Seguro que deseas anular este pedido?')) actualizarEstado('${p._id}', 'anulado')" style="background:none; border:none; color:var(--danger); font-weight:600; font-size:0.8rem; cursor:pointer; width:100%;">
+                ❌ Anular Pedido
+            </button>
+        </div>
+      </div>
+    `).join('');
+  } catch (error) {
+    console.error(error);
+    showToast("Error cargando comandas. ¿Reiniciaste el backend?", "error");
+  }
+}
+
+function getColorEstado(estado) {
+  if(estado === 'pagado') return '#ff9f43';
+  if(estado === 'en_preparacion') return '#54a0ff';
+  if(estado === 'en_camino') return '#2ecc71';
+  return '#ccc';
+}
+
+async function actualizarEstado(id, nuevoEstado) {
+  try {
+    const res = await fetch(`${API_URL}/orders/${id}/status`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ estado: nuevoEstado })
+    });
+    if (res.ok) {
+      showToast(`Pedido actualizado: ${nuevoEstado}`);
+      cargarPedidosCocina();
+    } else {
+      showToast("Error al actualizar", "error");
+    }
+  } catch (error) { showToast("Error de conexión", "error"); }
+}
+
+init();
+</script>
+</body>
+</html>
